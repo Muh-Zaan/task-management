@@ -13,6 +13,7 @@ const AuthLayout = ({ children }: Props) => {
         <div className="w-2/4 py-20 px-32 flex flex-col justify-between gap-10">
           <div className="h-6 w-6 rotate-45 bg-black"></div>
           <div
+            className="items-center"
             style={{
               height: "calc(100% - 100px)",
             }}
