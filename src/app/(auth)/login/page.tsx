@@ -58,9 +58,18 @@ const LoginPage = () => {
             Forgot Password ?
           </Link>
         </div>
-        <button className="text-white bg-black py-2 rounded-md font-medium">
+        <button
+          className="text-white bg-black py-2 rounded-md font-medium"
+          type="submit"
+        >
           Login
         </button>
+        <div className="flex justify-center gap-1">
+          <p>Dont have an account yet ?</p>
+          <Link href={"/register"} className="text-blue-500 font-medium">
+            Register
+          </Link>
+        </div>
       </form>
     </div>
   );
