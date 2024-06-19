@@ -1,14 +1,50 @@
 "use client";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
-import React, { ChangeEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
+  const router = useRouter();
 
-  const onSubmit = (event: ChangeEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    const accountData = localStorage.getItem("account-data");
+    if (accountData != null) {
+      const data = JSON.parse(accountData);
+      setEmail(data.email);
+      setPassword(data.password);
+      setRemember(true);
+    }
+  }, []);
+
+  const onSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
+    const account = localStorage.getItem("account-data");
+    if (remember) {
+      localStorage.setItem(
+        "account-data",
+        JSON.stringify({
+          email,
+          password,
+        })
+      );
+    } else if (!remember && account) {
+      localStorage.removeItem("account-data");
+    }
     event.preventDefault();
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    }).then((response) => {
+      if (response && response.ok) {
+        router.push("/dashboard");
+      } else {
+        alert(response?.error);
+      }
+    });
   };
 
   return (
@@ -23,6 +59,7 @@ const LoginPage = () => {
             Email<span className="text-red-500">*</span>
           </p>
           <input
+            value={email}
             placeholder="Please input your email"
             type="text"
             className="border py-2 px-4 outline-none rounded-md"
@@ -36,6 +73,7 @@ const LoginPage = () => {
             Password<span className="text-red-500">*</span>
           </p>
           <input
+            value={password}
             placeholder="Please input your password"
             type="password"
             className="border py-2 px-4 outline-none rounded-md"
@@ -47,6 +85,7 @@ const LoginPage = () => {
         <div className="flex justify-between items-center">
           <div className="flex gap-1 items-center">
             <input
+              checked={remember}
               type="checkbox"
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 setRemember(event.target.checked);

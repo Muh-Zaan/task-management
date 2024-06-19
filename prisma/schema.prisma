@@ -14,5 +14,5 @@ model user {
   password         String
   photo_profile    String
   created_datetime DateTime @default(now())
-  updated_datetiem DateTime @updatedAt
+  updated_datetime DateTime @updatedAt
 }

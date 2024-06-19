@@ -1,15 +1,18 @@
 import {
   BAD_REQUEST,
   EMAIL_FOUND,
+  NOT_FOUND,
   STATUS_BAD_REQUEST,
+  STATUS_NOT_FOUND,
+  STATUS_UNAUTHORIZED,
+  WRONG_PASSWORD,
 } from "@/context/response";
-import { getUserUniqueService, registerService } from "@/lib/service/user";
-
-type GetUserByUnique = {
-  id?: string;
-  email?: string;
-  username: string;
-};
+import { comparePassword } from "@/helper/hashPassword";
+import {
+  getUserUniqueService,
+  loginService,
+  registerService,
+} from "@/lib/service/user";
 
 type ParamsRegister = {
   email: string;
@@ -65,4 +68,11 @@ export const registerController = async ({
   } catch (error) {
     return error;
   }
+};
+
+export const loginConteoller = async (email: string, password: string) => {
+  try {
+    const user = await loginService(email);
+    return user;
+  } catch (error) {}
 };

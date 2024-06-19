@@ -1,6 +1,8 @@
 import {
   FAILED,
+  NOT_FOUND,
   STATUS_BAD_REQUEST,
+  STATUS_NOT_FOUND,
   STATUS_SUCCESS_CREATE,
   SUCCESS_CREATE,
 } from "@/context/response";
@@ -73,7 +75,7 @@ export const registerService = async ({
       data: {
         username,
         email,
-        password: hashedPassword,
+        password: hashedPassword as string,
         photo_profile: "",
       },
     });
@@ -90,4 +92,16 @@ export const registerService = async ({
   } catch (error) {
     return error;
   }
+};
+
+export const loginService = async (email: string) => {
+  try {
+    const res = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return res;
+  } catch (error) {}
 };
