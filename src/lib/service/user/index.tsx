@@ -81,7 +81,11 @@ export const registerService = async ({
     return {
       status: STATUS_SUCCESS_CREATE,
       message: SUCCESS_CREATE,
-      data: res,
+      data: {
+        id: res.id,
+        username: res.username,
+        email: res.email,
+      },
     };
   } catch (error) {
     return error;

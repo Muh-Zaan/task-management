@@ -30,14 +30,14 @@ export const registerController = async ({
         message: "email is required!",
       };
     }
-    if (username) {
+    if (!username) {
       return {
         status: STATUS_BAD_REQUEST,
         error: BAD_REQUEST,
         message: "username is required!",
       };
     }
-    if (password) {
+    if (!password) {
       return {
         status: STATUS_BAD_REQUEST,
         error: BAD_REQUEST,
@@ -61,7 +61,7 @@ export const registerController = async ({
     };
 
     const service = await registerService(data);
-    console.log(service);
+    return service;
   } catch (error) {
     return error;
   }
