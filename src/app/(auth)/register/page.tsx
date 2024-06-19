@@ -1,13 +1,30 @@
 "use client";
+import axios from "axios";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import React, { ChangeEvent, useState } from "react";
 
 const RegisterPage = () => {
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const onSubmit = (event: ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      const data = {
+        username,
+        email,
+        password,
+      };
+
+      const response = await axios.post("/api/v1/register", data);
+      if (response.status == 201) {
+        signIn();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -19,9 +36,24 @@ const RegisterPage = () => {
       <form className="w-full flex flex-col gap-5 mt-10" onSubmit={onSubmit}>
         <div className="flex flex-col gap-1">
           <p className="font-medium">
+            Username<span className="text-red-500">*</span>
+          </p>
+          <input
+            value={username}
+            placeholder="Please input your username"
+            type="text"
+            className="border py-2 px-4 outline-none rounded-md"
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              setUsername(event.target.value);
+            }}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="font-medium">
             Email<span className="text-red-500">*</span>
           </p>
           <input
+            value={email}
             placeholder="Please input your email"
             type="text"
             className="border py-2 px-4 outline-none rounded-md"
@@ -35,24 +67,12 @@ const RegisterPage = () => {
             Password<span className="text-red-500">*</span>
           </p>
           <input
-            placeholder="Please input your email"
+            value={password}
+            placeholder="Please input your password"
             type="password"
             className="border py-2 px-4 outline-none rounded-md"
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setEmail(event.target.value);
-            }}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="font-medium">
-            Confirmation Password<span className="text-red-500">*</span>
-          </p>
-          <input
-            placeholder="Please input your email"
-            type="password"
-            className="border py-2 px-4 outline-none rounded-md"
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setEmail(event.target.value);
+              setPassword(event.target.value);
             }}
           />
         </div>
