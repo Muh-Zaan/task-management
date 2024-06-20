@@ -3,10 +3,13 @@ import {
   NOT_FOUND,
   STATUS_BAD_REQUEST,
   STATUS_NOT_FOUND,
+  STATUS_SUCCESS,
   STATUS_SUCCESS_CREATE,
   SUCCESS_CREATE,
+  SUCCESS_SEND,
 } from "@/context/response";
 import { hashPassword } from "@/helper/hashPassword";
+import { sendEmail } from "@/lib/nodemailer";
 import { PrismaClient } from "@prisma/client";
 
 type GetUserByUnique = {
@@ -103,5 +106,7 @@ export const loginService = async (email: string) => {
     });
 
     return res;
-  } catch (error) {}
+  } catch (error) {
+    return error;
+  }
 };

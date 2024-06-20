@@ -1,11 +1,7 @@
 import {
   BAD_REQUEST,
   EMAIL_FOUND,
-  NOT_FOUND,
   STATUS_BAD_REQUEST,
-  STATUS_NOT_FOUND,
-  STATUS_UNAUTHORIZED,
-  WRONG_PASSWORD,
 } from "@/context/response";
 import { comparePassword } from "@/helper/hashPassword";
 import {
@@ -74,5 +70,7 @@ export const loginConteoller = async (email: string, password: string) => {
   try {
     const user = await loginService(email);
     return user;
-  } catch (error) {}
+  } catch (error) {
+    return error;
+  }
 };

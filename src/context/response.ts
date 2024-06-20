@@ -1,5 +1,6 @@
 // Success Response
 export const SUCCESS_CREATE = "Success Create Data";
+export const SUCCESS_SEND = "Success send email";
 
 // Failed Response
 export const BAD_REQUEST = "Bad Request";

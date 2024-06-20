@@ -1,4 +1,5 @@
 "use client";
+import Modal from "@/components/Modal";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -93,9 +94,9 @@ const LoginPage = () => {
             />
             <p className="text-sm font-medium">Remember Me</p>
           </div>
-          <Link href={"/"} className="text-sm font-medium">
+          <button className="text-sm font-medium" type="button">
             Forgot Password ?
-          </Link>
+          </button>
         </div>
         <button
           className="text-white bg-black py-2 rounded-md font-medium"
@@ -110,6 +111,7 @@ const LoginPage = () => {
           </Link>
         </div>
       </form>
+      <Modal />
     </div>
   );
 };
