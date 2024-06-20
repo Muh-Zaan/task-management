@@ -1,14 +1,19 @@
 "use client";
-import Modal from "@/components/Modal";
+import ModalRecoverPassword from "@/components/ModalRecoverPassword";
+import axios from "axios";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 const LoginPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [emailRecover, setEmailRecover] = useState<string>("");
+  const [loadingEmail, setLoadingEmaiil] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -46,6 +51,31 @@ const LoginPage = () => {
         alert(response?.error);
       }
     });
+  };
+
+  const submitEmail = async (event: ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoadingEmaiil(true);
+    try {
+      const response = await axios.post("/api/v1/recovery-password", {
+        email: emailRecover,
+      });
+
+      if (response.status == 200) {
+        setLoadingEmaiil(false);
+        setOpenModal(false);
+        setEmailRecover("");
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -94,7 +124,11 @@ const LoginPage = () => {
             />
             <p className="text-sm font-medium">Remember Me</p>
           </div>
-          <button className="text-sm font-medium" type="button">
+          <button
+            className="text-sm font-medium"
+            type="button"
+            onClick={() => setOpenModal(true)}
+          >
             Forgot Password ?
           </button>
         </div>
@@ -111,7 +145,16 @@ const LoginPage = () => {
           </Link>
         </div>
       </form>
-      <Modal />
+      {openModal && (
+        <ModalRecoverPassword
+          email={emailRecover}
+          loading={loadingEmail}
+          onSubmit={submitEmail}
+          onChangeEmail={(event: ChangeEvent<HTMLInputElement>) =>
+            setEmailRecover(event.target.value)
+          }
+        />
+      )}
     </div>
   );
 };

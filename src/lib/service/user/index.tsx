@@ -6,6 +6,7 @@ import {
   STATUS_SUCCESS,
   STATUS_SUCCESS_CREATE,
   SUCCESS_CREATE,
+  SUCCESS_EDIT,
   SUCCESS_SEND,
 } from "@/context/response";
 import { hashPassword } from "@/helper/hashPassword";
@@ -21,6 +22,11 @@ type GetUserByUnique = {
 type ParamsRegister = {
   email: string;
   username: string;
+  password: string;
+};
+
+type ParamsRecoverPass = {
+  email: string;
   password: string;
 };
 
@@ -106,6 +112,38 @@ export const loginService = async (email: string) => {
     });
 
     return res;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updatePassword = async ({
+  email,
+  password,
+}: ParamsRecoverPass) => {
+  try {
+    const hashedPassword = await hashPassword(password);
+    if (!hashedPassword) {
+      return {
+        error: FAILED,
+        message: "Failed to hash password",
+      };
+    }
+
+    const response = await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      status: STATUS_SUCCESS,
+      message: SUCCESS_EDIT,
+      data: response,
+    };
   } catch (error) {
     return error;
   }

@@ -8,6 +8,7 @@ import {
   getUserUniqueService,
   loginService,
   registerService,
+  updatePassword,
 } from "@/lib/service/user";
 
 type ParamsRegister = {
@@ -70,6 +71,39 @@ export const loginConteoller = async (email: string, password: string) => {
   try {
     const user = await loginService(email);
     return user;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updatePasswordController = async (
+  id: string,
+  password: string
+) => {
+  try {
+    if (!password) {
+      return {
+        status: STATUS_BAD_REQUEST,
+        error: BAD_REQUEST,
+        message: "password is required!",
+      };
+    }
+
+    const user = (await getUserUniqueService({ id })) as any;
+    if (!user) {
+      return {
+        status: STATUS_BAD_REQUEST,
+        error: EMAIL_FOUND,
+        message: `${id} has been used, please use another email or login with this email`,
+      };
+    }
+
+    const service = await updatePassword({
+      email: user.email,
+      password,
+    });
+
+    return service;
   } catch (error) {
     return error;
   }
