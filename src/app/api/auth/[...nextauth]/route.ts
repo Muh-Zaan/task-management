@@ -7,7 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 120,
+    maxAge: 7200,
   },
   secret: "secret",
   providers: [
@@ -30,7 +30,7 @@ const authOptions: NextAuthOptions = {
         };
 
         const data: any = {};
-        const user = await loginConteoller(email, password);
+        const user = (await loginConteoller(email, password)) as any;
         if (!user) {
           throw new Error(
             `${email} is not registed, please register firts or check again your email`

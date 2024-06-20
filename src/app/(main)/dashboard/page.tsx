@@ -7,7 +7,7 @@ const DashboardPage = () => {
 
   console.log(session);
   return (
-    <div className="h-screen w-screen flex flex-col gap-4 justify-center items-center">
+    <div className="">
       <h1>Hallo Dashboard!</h1>
       <div className="flex gap-4 items-center">
         <button
