@@ -25,10 +25,12 @@ const Sidebar = () => {
             <Clipboard size={18} strokeWidth={2} />
             <span className="font-medium">My Task</span>
           </button>
-          <button className="flex justify-start items-center gap-3 px-4 py-3 rounded w-full">
-            <BookOpen size={18} strokeWidth={2} />
-            <span className="font-medium">Project</span>
-          </button>
+          <Link href={"/project"}>
+            <button className="flex justify-start items-center gap-3 px-4 py-3 rounded w-full">
+              <BookOpen size={18} strokeWidth={2} />
+              <span className="font-medium">Project</span>
+            </button>
+          </Link>
         </div>
       </div>
       <div className="w-full h-32 px-8 pb-8 flex flex-col justify-end">

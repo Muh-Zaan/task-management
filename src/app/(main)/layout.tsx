@@ -25,7 +25,7 @@ const LayoutDashboard = ({ children }: Props) => {
             <Header />
           </div>
           <div
-            className="w-full py-4 px-8"
+            className="w-full py-8 px-8 bg-gray-400/10 rounded-xl"
             style={{
               height: "calc(100% - 80px)",
             }}
