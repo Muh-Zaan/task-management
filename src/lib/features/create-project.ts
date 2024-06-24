@@ -24,7 +24,6 @@ export const projectSlice = createSlice({
   reducers: {
     addDetailProject: (state, action) => {
       const { project_title, project_body } = action.payload;
-      console.log(project_title, project_body, "ini mereka berdua");
       state.value.project_title = project_title;
       state.value.project_description = project_body;
     },

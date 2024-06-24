@@ -5,6 +5,7 @@ import ProjectMember from "@/components/CreateProject/ProjectMember";
 import TextRichEditor from "@/components/TextRichEditor";
 import { addDetailProject } from "@/lib/features/create-project";
 import { RootState, useAppDispatch } from "@/lib/store";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -27,17 +28,44 @@ const CreateProject = () => {
     return () => clearTimeout(timeout);
   }, [page]);
 
-  const submitDetailProject = (event: ChangeEvent<HTMLFormElement>) => {
+  const submitDetailProject = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      dispatch(
-        addDetailProject({
-          project_title: projectTitle,
-          project_body: projectDescription,
-        })
-      );
+      // dispatch(
+      //   addDetailProject({
+      //     project_title: projectTitle,
+      //     project_body: projectDescription,
+      //   })
+      // );
 
-      setPage("attachment");
+      // setPage("attachment");
+      const response = await axios.post("/api/v1/project", {
+        project_name: "Example Project",
+        project_description: "<p>Project Description</p>",
+        attachment: [
+          {
+            name: "PRD File",
+            url: "https://youtube.com",
+          },
+          {
+            name: "PRD File 2",
+            url: "https://youtube.com",
+          },
+        ],
+        member: [
+          {
+            role: "project_owner",
+            user: "0de4c154-7e66-4717-b486-a9fd8f8ad88d",
+          },
+          {
+            role: "project_leader",
+            user: "54726e0e-1807-4a32-88b6-0662db94523d",
+          },
+        ],
+      });
+
+      if (response.status == 200) {
+      }
     } catch (error) {
       console.log(error);
     }
