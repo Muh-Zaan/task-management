@@ -17,10 +17,12 @@ const Sidebar = () => {
       >
         <p className="text-sm text-slate-400 font-medium">List Menu</p>
         <div className="w-full mt-3 flex flex-col gap-2">
-          <button className="flex justify-start items-center gap-3 px-4 py-3 rounded w-full">
-            <Home size={18} strokeWidth={2} />
-            <span className="font-medium">Dashboard</span>
-          </button>
+          <Link href={"/dashboard"}>
+            <button className="flex justify-start items-center gap-3 px-4 py-3 rounded w-full">
+              <Home size={18} strokeWidth={2} />
+              <span className="font-medium">Dashboard</span>
+            </button>
+          </Link>
           <button className="flex justify-start items-center gap-3 px-4 py-3 rounded w-full">
             <Clipboard size={18} strokeWidth={2} />
             <span className="font-medium">My Task</span>
