@@ -1,4 +1,5 @@
 import { comparePassword } from "@/helper/hashPassword";
+import { JwtTokenGenerate } from "@/helper/parseJwtToken";
 import { loginConteoller } from "@/lib/controller/user";
 import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
@@ -61,6 +62,10 @@ const authOptions: NextAuthOptions = {
         token.photo_profile = user.photo_profile;
         token.created_datetime = user.created_datetime;
         token.updated_datetime = user.updated_datetime;
+        token.accessToken = JwtTokenGenerate({
+          id: user.id,
+          email: user.email,
+        });
       }
       return token;
     },
@@ -71,6 +76,7 @@ const authOptions: NextAuthOptions = {
       session.user.photo_profile = token.photo_profile;
       session.user.created_datetime = token.created_datetime;
       session.user.updated_datetime = token.updated_datetime;
+      session.user.accessToken = token.accessToken;
       return session;
     },
   },
