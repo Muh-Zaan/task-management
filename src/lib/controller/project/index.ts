@@ -1,4 +1,5 @@
 import { BAD_REQUEST, STATUS_BAD_REQUEST } from "@/context/response";
+import { ParseJwtToken } from "@/helper/parseJwtToken";
 import { createProject } from "@/lib/service/project";
 
 type ProjectAttachment = {
@@ -7,13 +8,14 @@ type ProjectAttachment = {
 };
 
 type MemberProject = {
-  name: string;
+  user: string;
   role: string;
 };
 
 type ParamsCreateProject = {
   project_name: string;
   project_description: string;
+  token: string;
   attachment: ProjectAttachment[];
   member: MemberProject[];
 };
@@ -24,6 +26,7 @@ export const ProjectController = {
     project_description,
     attachment,
     member,
+    token,
   }: ParamsCreateProject) => {
     try {
       if (!project_name) {
@@ -55,11 +58,14 @@ export const ProjectController = {
         };
       }
 
+      const decodeToken = ParseJwtToken(token);
+
       const data = await createProject({
         project_name,
         project_description,
         attachment,
         member,
+        user_id: decodeToken.id,
       });
 
       return data;

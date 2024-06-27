@@ -15,6 +15,7 @@ type MemberProject = {
 type ParamsCreateProject = {
   project_name: string;
   project_description: string;
+  user_id: string;
   attachment: ProjectAttachment[];
   member: MemberProject[];
 };
@@ -26,12 +27,14 @@ export const createProject = async ({
   project_description,
   attachment,
   member,
+  user_id,
 }: ParamsCreateProject) => {
   try {
     const data = await prisma.project.create({
       data: {
         project_name,
         project_description,
+        created_by: user_id,
       },
     });
 

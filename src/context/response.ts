@@ -2,6 +2,7 @@
 export const SUCCESS_CREATE = "Success Create Data";
 export const SUCCESS_SEND = "Success send email";
 export const SUCCESS_EDIT = "Success edit data";
+export const SUCCESS_GET = "Success getting data";
 
 // Failed Response
 export const BAD_REQUEST = "Bad Request";

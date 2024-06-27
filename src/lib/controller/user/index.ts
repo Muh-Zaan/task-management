@@ -1,13 +1,17 @@
 import {
   BAD_REQUEST,
   EMAIL_FOUND,
+  NOT_FOUND,
   STATUS_BAD_REQUEST,
+  STATUS_NOT_FOUND,
 } from "@/context/response";
 import { comparePassword } from "@/helper/hashPassword";
 import {
+  findAllUser,
   getUserUniqueService,
   loginService,
   registerService,
+  searchUserService,
   updatePassword,
 } from "@/lib/service/user";
 
@@ -15,6 +19,39 @@ type ParamsRegister = {
   email: string;
   username: string;
   password: string;
+};
+
+export const getAllController = async () => {
+  try {
+    const users = await findAllUser();
+    if (users.length == 0) {
+      return {
+        status: STATUS_NOT_FOUND,
+        error: NOT_FOUND,
+        message: "User not found!",
+      };
+    }
+    return users;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const searchUsers = async (username: string) => {
+  try {
+    if (username) {
+      const user = await searchUserService(username);
+      if (user == null) {
+        return {
+          status: STATUS_NOT_FOUND,
+          error: NOT_FOUND,
+          message: "User not found!",
+        };
+      }
+
+      return user;
+    }
+  } catch (error) {}
 };
 
 export const registerController = async ({

@@ -1,10 +1,11 @@
+import { AttachmentData } from "@/types/project";
 import { createSlice } from "@reduxjs/toolkit";
 
 type StateType = {
   value: {
     project_title: string;
     project_description: string;
-    project_attachment: any;
+    project_attachment: AttachmentData[];
     project_member: any;
   };
 };
@@ -27,8 +28,25 @@ export const projectSlice = createSlice({
       state.value.project_title = project_title;
       state.value.project_description = project_body;
     },
+    addAttachmentData: (state, action) => {
+      const data: AttachmentData = {
+        name: action.payload.name,
+        url: action.payload.url,
+      };
+      state.value.project_attachment = [
+        ...state.value.project_attachment,
+        data,
+      ];
+    },
+    deleteAttachment: (state, action) => {
+      const url = action.payload.url;
+      state.value.project_attachment = state.value.project_attachment.filter(
+        (attachment) => attachment.url != url
+      );
+    },
   },
 });
 
-export const { addDetailProject } = projectSlice.actions;
+export const { addDetailProject, addAttachmentData, deleteAttachment } =
+  projectSlice.actions;
 export default projectSlice.reducer;

@@ -3,8 +3,14 @@ import Detail from "@/components/CreateProject/Detail";
 import ProjectAttachment from "@/components/CreateProject/ProjectAttachment";
 import ProjectMember from "@/components/CreateProject/ProjectMember";
 import TextRichEditor from "@/components/TextRichEditor";
-import { addDetailProject } from "@/lib/features/create-project";
+import {
+  addAttachmentData,
+  addDetailProject,
+  deleteAttachment,
+} from "@/lib/features/create-project";
 import { RootState, useAppDispatch } from "@/lib/store";
+import { AttachmentData } from "@/types/project";
+import { del, put } from "@vercel/blob";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -14,10 +20,17 @@ const CreateProject = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [projectTitle, setProjectTitle] = useState<string>("");
   const [projectDescription, setProjectDescription] = useState<any>("");
+  const [loadingFile, setLoadingFile] = useState<boolean>(false);
+  const [fileName, setFileName] = useState<string>("");
+  const [fileUploaded, setFileUploaded] = useState<string>("");
+  const [urlFile, setUrlFile] = useState<string>("");
   const [page, setPage] = useState<string>("detail");
   const router = useRouter();
   const dispatch = useAppDispatch();
   const projectDetail = useSelector((state: RootState) => state.project.value);
+  const attachmentData = useSelector(
+    (state: RootState) => state.project.value.project_attachment
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -28,47 +41,67 @@ const CreateProject = () => {
     return () => clearTimeout(timeout);
   }, [page]);
 
+  useEffect(() => {
+    if (page == "member") {
+      
+    }
+  }, [page])
+
   const submitDetailProject = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      // dispatch(
-      //   addDetailProject({
-      //     project_title: projectTitle,
-      //     project_body: projectDescription,
-      //   })
-      // );
-
-      // setPage("attachment");
-      const response = await axios.post("/api/v1/project", {
-        project_name: "Example Project",
-        project_description: "<p>Project Description</p>",
-        attachment: [
-          {
-            name: "PRD File",
-            url: "https://youtube.com",
-          },
-          {
-            name: "PRD File 2",
-            url: "https://youtube.com",
-          },
-        ],
-        member: [
-          {
-            role: "project_owner",
-            user: "0de4c154-7e66-4717-b486-a9fd8f8ad88d",
-          },
-          {
-            role: "project_leader",
-            user: "54726e0e-1807-4a32-88b6-0662db94523d",
-          },
-        ],
-      });
-
-      if (response.status == 200) {
-      }
+      dispatch(
+        addDetailProject({
+          project_title: projectTitle,
+          project_body: projectDescription,
+        })
+      );
+      setPage("attachment");
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const uploadImage = async (event: ChangeEvent<HTMLInputElement>) => {
+    setLoadingFile(true);
+    if (event.target.files) {
+      const file = event.target.files[0];
+      const { url } = await put(file.name, file, {
+        access: "public",
+        token: process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN,
+      });
+
+      if (url != "") {
+        setUrlFile(url);
+        setLoadingFile(false);
+        setFileUploaded(file.name);
+      }
+    }
+  };
+
+  const submitAttachment = (event: ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const data = {
+        name: fileName,
+        url: urlFile,
+      };
+
+      dispatch(addAttachmentData(data));
+      setFileName("");
+      setUrlFile("");
+      setFileUploaded("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeAttachment = async (url: string) => {
+    dispatch(
+      deleteAttachment({
+        url,
+      })
+    );
   };
 
   const changeProjectTitle = (event: ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +110,14 @@ const CreateProject = () => {
 
   const handleContentChange = (newContent: any) => {
     setProjectDescription(newContent);
+  };
+
+  const changeName = (event: ChangeEvent<HTMLInputElement>) => {
+    setFileName(event.target.value);
+  };
+
+  const handleNextAttachment = () => {
+    setPage("member");
   };
 
   const cancelHandle = () => {
@@ -88,6 +129,14 @@ const CreateProject = () => {
     );
 
     router.push("/project");
+  };
+
+  const handleBack = () => {
+    if (page == "attachment") {
+      setPage("detail");
+    } else if (page == "member") {
+      setPage("attachment");
+    }
   };
 
   return (
@@ -173,7 +222,18 @@ const CreateProject = () => {
               handleCancelButton={cancelHandle}
             />
           ) : page == "attachment" ? (
-            <ProjectAttachment />
+            <ProjectAttachment
+              dataAttachment={attachmentData}
+              isLoading={loadingFile}
+              fileName={fileName}
+              fileUploaded={fileUploaded}
+              changeName={changeName}
+              uploadImage={uploadImage}
+              submitData={submitAttachment}
+              removeAttachment={removeAttachment}
+              handleBack={handleBack}
+              handleNextAttachment={handleNextAttachment}
+            />
           ) : page == "member" ? (
             <ProjectMember />
           ) : (
@@ -186,3 +246,30 @@ const CreateProject = () => {
 };
 
 export default CreateProject;
+
+// const response = await axios.post("/api/v1/project", {
+//   project_name: "Example Project",
+//   project_description: "<p>Project Description</p>",
+//   attachment: [
+//     {
+//       name: "PRD File",
+//       url: "https://youtube.com",
+//     },
+//     {
+//       name: "PRD File 2",
+//       url: "https://youtube.com",
+//     },
+//   ],
+//   member: [
+//     {
+//       role: "project_owner",
+//       user: "0de4c154-7e66-4717-b486-a9fd8f8ad88d",
+//     },
+//     {
+//       role: "project_leader",
+//       user: "54726e0e-1807-4a32-88b6-0662db94523d",
+//     },
+//   ],
+// });
+// if (response.status == 200) {
+// }

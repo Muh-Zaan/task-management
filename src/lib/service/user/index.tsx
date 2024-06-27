@@ -1,8 +1,5 @@
 import {
   FAILED,
-  NOT_FOUND,
-  STATUS_BAD_REQUEST,
-  STATUS_NOT_FOUND,
   STATUS_SUCCESS,
   STATUS_SUCCESS_CREATE,
   SUCCESS_CREATE,
@@ -10,7 +7,6 @@ import {
   SUCCESS_SEND,
 } from "@/context/response";
 import { hashPassword } from "@/helper/hashPassword";
-import { sendEmail } from "@/lib/nodemailer";
 import { PrismaClient } from "@prisma/client";
 
 type GetUserByUnique = {
@@ -31,6 +27,42 @@ type ParamsRecoverPass = {
 };
 
 const prisma = new PrismaClient();
+
+export const findAllUser = async () => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      photo_profile: true,
+      created_datetime: true,
+      updated_datetime: true,
+      password: false,
+      member_project: true,
+    },
+  });
+  return users;
+};
+
+export const searchUserService = async (search: string) => {
+  try {
+    const user = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            username: {
+              contains: search.toLowerCase(),
+            },
+          },
+        ],
+      },
+    });
+
+    return user;
+  } catch (error) {
+    return error;
+  }
+};
 
 export const getUserUniqueService = async ({
   id,

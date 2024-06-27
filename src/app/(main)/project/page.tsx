@@ -1,7 +1,11 @@
+"use client";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
 const ProjectPage = () => {
+  const { data: session } = useSession();
+  console.log(session);
   return (
     <div className="w-full h-full">
       <div className="w-full h-14 flex justify-between items-center">

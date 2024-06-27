@@ -21,6 +21,7 @@ model user {
 model project {
   id                  String               @unique @default(uuid())
   project_name        String               @unique
+  created_by          String
   project_description Json
   created_datetime    DateTime             @default(now())
   updated_datetime    DateTime             @updatedAt
